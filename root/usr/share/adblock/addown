@@ -1,0 +1,47 @@
+#!/bin/sh
+[ "$1" = --down ] || exit 1
+# 防止重复启动
+LOCK=/var/lock/adblock.lock
+[ -f $LOCK ] && exit 1
+touch $LOCK
+
+A=https://small_5.coding.net/p/adbyby/d/adbyby/git/raw/master
+B=/tmp/adblock
+C=/tmp/adupdate.log
+D="date +'%Y-%m-%d %H:%M:%S'"
+E="curl -Lfso"
+F="Download Adblock Plus Rules"
+G="Download Subscribe Rules"
+
+if [ "$2" = 1 ];then
+	mkdir -p $B
+	echo "`eval $D` [$F]" > $C
+	while ! $E $B/adblock.conf $A/dnsmasq.adblock;do
+		sleep 2
+	done
+
+	echo "`eval $D` [$F MD5 File]" >> $C
+	while ! $E $B/md5 $A/md5_1;do
+		sleep 2
+	done
+
+	X=$(md5sum $B/adblock.conf | awk '{print$1}')
+	Y=$(sed 's/":"/\n/g' $B/md5 | sed 's/","/\n/g' | sed -n '2P')
+	rm -f $B/md5
+	if [ -z "$X" -o -z "$Y" -o "$X" != "$Y" ];then
+		echo "`eval $D` [$F Failed!]" >> $C
+		rm -rf $B;A=1
+	else
+		echo "`eval $D` [$F Successful!]" >> $C
+	fi
+	for i in $(cat /etc/adblock/white.list);do sed -i -e "/\/$i\//d" -e "/\.$i\//d" $B/adblock.conf;done
+fi
+
+if [ "$3" = 1 -a $A != 1 ];then
+	echo "`eval $D` [$G]" >> $C
+	/usr/share/adblock/adblock addown >> $C
+fi
+
+[ $A = 1 ] || (echo "`eval $D` [Start Adblock Plus+]" >> $C;echo `eval $D` > $B/adblock.updated)
+rm -f $LOCK
+/etc/init.d/adblock start &
