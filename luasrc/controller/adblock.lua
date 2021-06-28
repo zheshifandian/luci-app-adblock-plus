@@ -5,7 +5,7 @@ function index()
 	end
 	local e=entry({"admin","services","adblock"},firstchild(),_("Adblock Plus+"),1)
 	e.dependent=false
-	e.acl_depends={ "luci-app-adblock-plus" }
+	e.acl_depends={"luci-app-adblock-plus"}
 	entry({"admin","services","adblock","base"},cbi("adblock/base"),_("Base Setting"),1).leaf=true
 	entry({"admin","services","adblock","white"},form("adblock/white"),_("White Domain List"),2).leaf=true
 	entry({"admin","services","adblock","black"},form("adblock/black"),_("Block Domain List"),3).leaf=true
@@ -27,7 +27,7 @@ local set=luci.http.formvalue("set")
 local icount=0
 
 if set=="0" then
-	sret=luci.sys.call("curl -Lfso /tmp/adnew.conf https://small_5.coding.net/p/adbyby/d/adbyby/git/raw/master/easylistchina%2Beasylist.txt || curl -Lfso /tmp/adnew.conf https://easylist-downloads.adblockplus.org/easylistchina+easylist.txt")
+	sret=luci.sys.call("curl -Lfso /tmp/adnew.conf https://cdn.jsdelivr.net/gh/small-5/ad-rules/easylistchina+easylist.txt || curl -Lfso /tmp/adnew.conf https://easylist-downloads.adblockplus.org/easylistchina+easylist.txt")
 	if sret==0 then
 		luci.sys.call("/usr/share/adblock/adblock gen")
 		icount=luci.sys.exec("cat /tmp/ad.conf | wc -l")

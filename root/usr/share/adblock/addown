@@ -5,7 +5,7 @@ LOCK=/var/lock/adblock.lock
 [ -f $LOCK ] && exit 1
 touch $LOCK
 
-A=https://small_5.coding.net/p/adbyby/d/adbyby/git/raw/master
+A=0
 B=/tmp/adblock
 C=/tmp/adupdate.log
 D="date +'%Y-%m-%d %H:%M:%S'"
@@ -16,24 +16,10 @@ G="Download Subscribe Rules"
 if [ "$2" = 1 ];then
 	mkdir -p $B
 	echo "`eval $D` [$F]" > $C
-	while ! $E $B/adblock.conf $A/dnsmasq.adblock;do
+	while ! $E $B/adblock.conf https://cdn.jsdelivr.net/gh/small-5/ad-rules/dnsmasq.adblock;do
 		sleep 2
 	done
-
-	echo "`eval $D` [$F MD5 File]" >> $C
-	while ! $E $B/md5 $A/md5_1;do
-		sleep 2
-	done
-
-	X=$(md5sum $B/adblock.conf | awk '{print$1}')
-	Y=$(sed 's/":"/\n/g' $B/md5 | sed 's/","/\n/g' | sed -n '2P')
-	rm -f $B/md5
-	if [ -z "$X" -o -z "$Y" -o "$X" != "$Y" ];then
-		echo "`eval $D` [$F Failed!]" >> $C
-		rm -rf $B;A=1
-	else
-		echo "`eval $D` [$F Successful!]" >> $C
-	fi
+	echo "`eval $D` [$F Successful]" >> $C
 	for i in $(cat /etc/adblock/white.list);do sed -i -e "/\/$i\//d" -e "/\.$i\//d" $B/adblock.conf;done
 fi
 

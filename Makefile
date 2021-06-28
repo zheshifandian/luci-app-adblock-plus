@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-app-adblock-plus
 PKG_VERSION:=1.0
-PKG_RELEASE:=2
+PKG_RELEASE:=7
 PKG_LICENSE:=GPLv2
 PKG_MAINTAINER:=Small_5
 
@@ -24,14 +24,6 @@ endef
 define Build/Prepare
 	$(foreach po,$(wildcard ${CURDIR}/po/zh-cn/*.po), \
 		po2lmo $(po) $(PKG_BUILD_DIR)/$(patsubst %.po,%.lmo,$(notdir $(po)));)
-endef
-
-define Package/$(PKG_NAME)/postinst
-#!/bin/sh
-[ -n "${IPKG_INSTROOT}" ] || {
-	(. /etc/uci-defaults/luci-app-adblock) && rm -f /etc/uci-defaults/luci-app-adblock
-	exit 0
-}
 endef
 
 define Build/Compile
