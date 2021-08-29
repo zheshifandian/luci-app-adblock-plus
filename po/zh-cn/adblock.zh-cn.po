@@ -95,4 +95,4 @@ msgid "Will Always block these IP"
 msgstr "拦截黑名单内的IP地址"
 
 msgid "Update Log"
-msgstr "更新日志"
+msgstr "运行日志"
