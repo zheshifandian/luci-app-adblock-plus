@@ -6,4 +6,3 @@ config adblock
 	option cron_mode '1'
 	option time_update '6'
 	option flash '0'
-	

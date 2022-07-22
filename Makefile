@@ -21,11 +21,6 @@ define Package/$(PKG_NAME)/description
 	Luci Support for Adblock Plus+.
 endef
 
-define Build/Prepare
-	$(foreach po,$(wildcard ${CURDIR}/po/zh-cn/*.po), \
-		po2lmo $(po) $(PKG_BUILD_DIR)/$(patsubst %.po,%.lmo,$(notdir $(po)));)
-endef
-
 define Build/Compile
 endef
 
@@ -41,19 +36,19 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/view/adblock
 	$(INSTALL_DATA) ./luasrc/view/adblock/* $(1)/usr/lib/lua/luci/view/adblock/
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/i18n
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/adblock.*.lmo $(1)/usr/lib/lua/luci/i18n/
+	po2lmo ./po/adblock.zh-cn.po $(1)/usr/lib/lua/luci/i18n/adblock.zh-cn.lmo
 	$(INSTALL_DIR) $(1)/etc/adblock
 	$(INSTALL_DATA) ./root/etc/adblock/* $(1)/etc/adblock/
 	$(INSTALL_DIR) $(1)/etc/config
 	$(INSTALL_DATA) ./root/etc/config/* $(1)/etc/config/
 	$(INSTALL_DIR) $(1)/etc/init.d
-	$(INSTALL_BIN) ./root/etc/init.d/* $(1)/etc/init.d/
+	$(INSTALL_BIN) ./root/etc/init.d/adblock $(1)/etc/init.d/adblock
 	$(INSTALL_DIR) $(1)/etc/uci-defaults
 	$(INSTALL_BIN) ./root/etc/uci-defaults/* $(1)/etc/uci-defaults/
 	$(INSTALL_DIR) $(1)/usr/share/adblock
 	$(INSTALL_BIN) ./root/usr/share/adblock/* $(1)/usr/share/adblock/
 	$(INSTALL_DIR) $(1)/usr/share/rpcd/acl.d
-	$(INSTALL_DATA) ./root/acl.d/* $(1)/usr/share/rpcd/acl.d/
+	$(INSTALL_DATA) ./root/usr/share/rpcd/acl.d/* $(1)/usr/share/rpcd/acl.d/
 endef
 
 $(eval $(call BuildPackage,$(PKG_NAME)))
